@@ -105,7 +105,7 @@ python mcp_servers/monitor_server.py
 # 注意：日志会自动输出到 logs\app_YYYY-MM-DD.log
 python -m uvicorn app.main:app --host 0.0.0.0 --port 9900
 
-# 9. 上传文档到向量库（新开一个 PowerShell 窗口）
+# 9. 上传文档到向量库（新开一个 PowerShell 窗口）只做一次
 # 等待服务启动完成后执行
 timeout /t 5
 python -c "import requests, os, time; [requests.post('http://localhost:9900/api/upload', files={'file': open(f'aiops-docs/{f}', 'rb')}) or time.sleep(1) for f in os.listdir('aiops-docs') if f.endswith('.md')]"
@@ -414,3 +414,37 @@ netstat -ano | findstr :8004  # Monitor MCP
 author： chief
 
 MIT License
+
+
+## Update on 06/07, 2026
+### 学习地址
+- [项目文档](https://icnaxnmh86kx.feishu.cn/wiki/Zd8LwhyexibG2AkyBr4cNBOWnRD)
+
+### Change
+- Secret 已经放在 .env 文件中
+- CLS Server 目前都是本地运行的Mock data. 如果要用真实数据，则去官网使用cls token，配置到 .env 文件中，然后本地文件夹 cls-mcp 下面基于 .env 运行 npx -y cls-mcp-server@latest, 然后修改config.py CLS server 配置, Client 才可以经过本地server 去 云上CLS API 拿数据。但是，CLS API 要真有数据才可以用的
+- 数据库用的Milvus, docker中启动的
+- 本地主要启动的是app.main.app 在本地 9900 端口 运行监听api， api背后接入的 agent 以及各种MCP工具和服务
+- 下次执行只需做 Step 4->8
+  ```md
+  # 4. 启动 Docker Desktop
+  # 确保 Docker Desktop 已安装并正在运行
+
+  # 5. 启动 Milvus 向量数据库（Docker Compose）
+  docker compose -f vector-database.yml up -d
+
+  # 6. 等待 Milvus 启动完成（约 5-10 秒）
+  timeout /t 10
+
+  # 7. 启动 MCP 服务
+  # 启动 CLS 日志查询服务（新开一个 PowerShell 窗口）
+  python mcp_servers/cls_server.py
+
+  # 启动 Monitor 监控服务（新开一个 PowerShell 窗口）
+  python mcp_servers/monitor_server.py
+
+  # 8. 启动 FastAPI 主服务（新开一个 PowerShell 窗口）
+  # 注意：日志会自动输出到 logs\app_YYYY-MM-DD.log
+  python -m uvicorn app.main:app --host 0.0.0.0 --port 9900
+  ```
+

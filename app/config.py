@@ -43,8 +43,8 @@ class Settings(BaseSettings):
     chunk_overlap: int = 100
 
     # MCP 服务配置
-    mcp_cls_transport: str = "streamable-http"
-    mcp_cls_url: str = "http://localhost:8003/mcp"
+    mcp_cls_transport: str = "sse"
+    mcp_cls_url: str = "http://localhost:3000/sse"
     mcp_monitor_transport: str = "streamable-http"
     mcp_monitor_url: str = "http://localhost:8004/mcp"
 
